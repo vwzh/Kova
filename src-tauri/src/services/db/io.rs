@@ -9,12 +9,52 @@ use crate::services::models::Note;
 impl Database {
     pub fn import_md_file(&self, path: &str) -> Result<Note, String> {
         let content = fs::read_to_string(path).map_err(|e| format!("Failed to read file: {}", e))?;
-        let (title, body) = if content.starts_with("# ") {
-            let end = content.find('\n').unwrap_or(content.len());
-            (content[2..end].trim().to_string(), content[end..].trim_start().to_string())
+
+        // Strip UTF-8 BOM if present
+        let content = content.strip_prefix('\u{FEFF}').unwrap_or(&content);
+
+        // Strip YAML frontmatter (Obsidian-style) and extract any title: field
+        let mut fm_title: Option<String> = None;
+        let body = if content.starts_with("---\n") || content.starts_with("---\r") {
+            let after_open = if let Some(s) = content.strip_prefix("---\n") {
+                s
+            } else if let Some(s) = content.strip_prefix("---\r\n") {
+                s
+            } else {
+                &content[4..] // bare ---\r
+            };
+            if let Some(close_pos) = after_open.find("\n---") {
+                let fm = &after_open[..close_pos];
+                for line in fm.lines() {
+                    if let Some(value) = line.trim().strip_prefix("title:") {
+                        fm_title = Some(value.trim().trim_matches('"').trim_matches('\'').to_string());
+                        break;
+                    }
+                }
+                // Skip closing --- and trailing newline
+                after_open[close_pos + 4..].trim_start().to_string()
+            } else if after_open.starts_with("---") {
+                // Empty frontmatter (---\n---): skip it
+                after_open.strip_prefix("---").unwrap_or("")
+                    .trim_start_matches(|c: char| c == '\n' || c == '\r')
+                    .to_string()
+            } else {
+                content.to_string()
+            }
         } else {
-            (String::new(), content)
+            content.to_string()
         };
+
+        // Extract title from first H1 heading, fall back to frontmatter title
+        let (title, body) = if body.starts_with("# ") {
+            let end = body.find('\n').unwrap_or(body.len());
+            (body[2..end].trim().to_string(), body[end..].trim_start().to_string())
+        } else if let Some(t) = fm_title {
+            (t, body)
+        } else {
+            (String::new(), body)
+        };
+
         self.create_note(&title, &body, vec![], None)
     }
 
