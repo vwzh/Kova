@@ -9,7 +9,7 @@
 ![Tauri](https://img.shields.io/badge/Tauri-2-24C8DB?logo=tauri)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript)
-![Rust](https://img.shields.io/badge/Rust-1.77+-dea584?logo=rust)
+![Rust](https://img.shields.io/badge/Rust-1.85+-dea584?logo=rust)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06b6d4?logo=tailwindcss)
 ![SQLite](https://img.shields.io/badge/SQLite-3-003B57?logo=sqlite)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -187,7 +187,7 @@ SQLite 本地数据库，不依赖云服务。你的笔记只存在你的电脑�
 ### 环境要求
 
 - Node.js
-- Rust 1.77.2+
+- Rust 1.85+
 
 ### 开发
 
