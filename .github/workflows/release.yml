@@ -27,7 +27,7 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: '1.85'
+          toolchain: stable
 
       - name: Install JS dependencies
         run: pnpm install --no-frozen-lockfile
