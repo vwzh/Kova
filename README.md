@@ -192,7 +192,7 @@ SQLite 本地数据库，不依赖云服务。你的笔记只存在你的电脑�
 ### 开发
 
 ```bash
-git clone https://github.com/Xinghongia/Kova.git
+git clone https://github.com/vwzh/Kova.git
 cd Kova
 npm install
 npx tauri dev
